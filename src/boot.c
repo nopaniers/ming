@@ -2,60 +2,54 @@
 // Ming Operating System
 //-------------------------------------------------------------------------
 
-// Useful addresses in memory
-#define SERIAL_ADDRESS 0xff002000
-#define VIDEO_ADDRESS 0xabe01000
-#define ARM_BASE 0x8000
-
-// Size of the screen
-#define WIDTH 800
-#define HEIGHT 1280
-
-
-//------------------------------------------------------------------------------
-// Function Prototypes
-//------------------------------------------------------------------------------
-
-extern void put_char(unsigned int, unsigned int);
-extern void hang();
+#include "start.h"
 
 
 //------------------------------------------------------------------------------
 // Writing to serial port
 //------------------------------------------------------------------------------
 
-void 
-write_char(char a) 
-{
-  put_char(SERIAL_ADDRESS, a);
-}
-
-
-void 
-writeln(char* str) 
-{
-  char nextChar;
-  while (nextChar = *str) {
-    put_char(SERIAL_ADDRESS, nextChar);
-    str++;
-  }
-  put_char(SERIAL_ADDRESS, '\n');
-}
-
-
-int 
+int
 show_welcome(unsigned zero, unsigned type, unsigned tags)
 {
-  writeln("");
-  writeln("---------------------");
-  writeln("Ming OS, version 0.01");
-  writeln("---------------------");
-  writeln("");
-  writeln("Written by Charles Hill, 2014");
-  writeln("");
+  writeln_serial("");
+  writeln_serial("---------------------");
+  writeln_serial("Ming OS, version 0.01");
+  writeln_serial("---------------------");
+  writeln_serial("");
+  writeln_serial("Written by Charles Hill, 2014");
+  writeln_serial("");
 
-  hang();
+  // hang();
 
   return 0;
+}
+
+static unsigned char* video_buffer = (unsigned char *) 0x100000;
+
+void
+splash_screen()
+{
+  writeln_serial("Setting up the splash screen.");
+
+  memset(video_buffer, 0x1a, WIDTH * HEIGHT);
+  memset(video_buffer+WIDTH*HEIGHT, 0xaa, WIDTH * HEIGHT);
+
+
+  int width = *((int *) 0xff014000);
+  if (width==WIDTH) {
+    writeln_serial("Got the right screen width.");
+  }
+
+  int height= *((int *) 0xff014004);
+  if (height==HEIGHT) {
+    writeln_serial("Got the right screen height.");
+  }
+
+  // Blit to screen
+  *((int *)0xff014010) = 0x100000;
+
+  writeln_serial("Finished setting up splash screen.");
+  hang();
 }
 

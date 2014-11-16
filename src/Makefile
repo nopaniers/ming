@@ -21,11 +21,14 @@ clean:
 start.o: start.s
 	$(ARM-GNU)-gcc $(COPTS) -c start.s -o start.o
 
-boot.o: boot.c
+boot.o: boot.c start.h
 	$(ARM-GNU)-gcc $(COPTS) -c boot.c -o boot.o
 
-kernel.img: loader start.o boot.o 
-	$(ARM-GNU)-ld start.o boot.o -T loader -o boot.elf
+memset.o: memset.s
+	$(ARM-GNU)-gcc $(COPTS) -c memset.s -o memset.o
+
+kernel.img: loader start.o boot.o memset.o
+	$(ARM-GNU)-ld start.o boot.o memset.o -T loader -o boot.elf
 	$(ARM-GNU)-objdump -D boot.elf > boot.list
 #	$(ARM-GNU)-objcopy boot.elf -O ihex boot.hex
 	$(ARM-GNU)-objcopy boot.elf -O binary kernel.img
