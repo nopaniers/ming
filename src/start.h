@@ -12,12 +12,7 @@
 
 // Useful addresses in memory
 #define SERIAL_ADDRESS 0xff002000
-#define VIDEO_MEMORY 0xabe01000
 #define ARM_BASE 0x8000
-
-// Size of the screen
-#define WIDTH 240
-#define HEIGHT 320
 
 
 
@@ -34,7 +29,7 @@
 #define TTY2       0xff011000
 #define TTY3       0xff012000
 #define SMC91X     0xff013000
-#define FB         0xff014000
+
 #define AUDIO      0xff004000
 #define MEM_LOG    0xff006000
 #define BATTERY    0xff015000
@@ -45,7 +40,6 @@
 #define SWITCH2    0xff01b000
 
 // The corresponding interrupts
-
 #define INTERRUPT_CONTROLLER_IRQ -1
 #define DEVICE_BUS_IRQ 1
 #define TIMER_IRQ      3
@@ -54,7 +48,6 @@
 #define TTY2_IRQ      11
 #define TTY3_IRQ      12
 #define SMC91X_IRQ    13
-#define FB_IRQ        14
 #define AUDIO_IRQ     15
 #define MEM_LOG_IRQ   -1
 #define BATTERY_IRQ   16
@@ -65,21 +58,19 @@
 #define SWITCH2_IRQ   20
 
 
-
 //------------------------------------------------------------------------------
 // Function Prototypes from start.s
 //------------------------------------------------------------------------------
 
 // Writing to an arbitrary address
-extern void putc_memory(unsigned int address, unsigned character);
-extern void writeln_memory(unsigned int address, char *string);
+void putc_memory(unsigned int address, unsigned character);
+void writeln_memory(unsigned int address, char *string);
 
 // Writing to the serial port
-// extern void putc_serial(unsigned character);
-extern void writeln_serial(char *string);
+void writeln_serial(char *string);
 
 // Hang in infinite loop
-extern void hang();
+void hang();
 
 // Memset, currently taken from Apple
 void *memset(void *ptr, int c, unsigned len);
