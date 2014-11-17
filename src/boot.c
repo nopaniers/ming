@@ -9,7 +9,7 @@
 // Writing to serial port
 //------------------------------------------------------------------------------
 
-int
+void
 show_welcome(unsigned zero, unsigned type, unsigned tags)
 {
   writeln_serial("");
@@ -19,10 +19,6 @@ show_welcome(unsigned zero, unsigned type, unsigned tags)
   writeln_serial("");
   writeln_serial("Written by Charles Hill, 2014");
   writeln_serial("");
-
-  // hang();
-
-  return 0;
 }
 
 static unsigned char* video_buffer = (unsigned char *) 0x100000;
@@ -47,7 +43,7 @@ splash_screen()
   }
 
   // Blit to screen
-  *((int *)0xff014010) = 0x100000;
+  *((int *) 0xff014010) = 0x100000;
 
   writeln_serial("Finished setting up splash screen.");
   hang();
