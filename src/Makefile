@@ -3,7 +3,7 @@ ARM-GNU ?= arm-linux-androideabi
 
 COPTS = -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mcpu=cortex-a9 -std=gnu99 -mthumb -mthumb-interwork
 
-OBJ_FILES = start.o boot.o memset.o video.o
+OBJ_FILES = start.o boot.o memset.o video.o timer.o
 
 kernel: kernel.img
 
@@ -31,6 +31,9 @@ memset.o: memset.s
 
 video.o: video.c video.h	
 	$(ARM-GNU)-gcc $(COPTS) -c video.c -o video.o
+
+timer.o: timer.c timer.h
+	$(ARM-GNU)-gcc $(COPTS) -c timer.c -o timer.o
 
 kernel.img: loader $(OBJ_FILES)
 	$(ARM-GNU)-ld $(OBJ_FILES) -T loader -o boot.elf

@@ -5,7 +5,8 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-#include <stdint.h>
+#include "types.h"
+
 
 //------------------------------------------------------------------------------
 // Memory layout
@@ -34,8 +35,6 @@ static unsigned char* video_buffer = (unsigned char *) VIDEO_BUFFER;
 //------------------------------------------------------------------------------
 // Video structure
 //------------------------------------------------------------------------------
-
-typedef uint32_t uint32;
 
 typedef enum {
   brga   = 0x01, // All values 8 bits for each colour except:
