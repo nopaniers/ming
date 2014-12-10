@@ -1,7 +1,7 @@
 
 ARM-GNU ?= arm-linux-androideabi
 
-COPTS = -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mcpu=cortex-a9 -std=gnu99 -mthumb -mthumb-interwork
+COPTS = -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mcpu=cortex-a9 -mthumb-interwork -std=gnu99 -mthumb -mthumb-interwork
 
 OBJ_FILES = start.o boot.o memset.o video.o timer.o
 
@@ -20,7 +20,7 @@ clean:
 	rm -f *.clang.s
 
 
-start.o: start.s
+start.o: start.s ../resources/ming_logo2.raw
 	$(ARM-GNU)-gcc $(COPTS) -c start.s -o start.o
 
 boot.o: boot.c start.h
@@ -35,11 +35,26 @@ video.o: video.c video.h
 timer.o: timer.c timer.h
 	$(ARM-GNU)-gcc $(COPTS) -c timer.c -o timer.o
 
-kernel.img: loader $(OBJ_FILES)
+
+../resources/ming_logo2.raw: ../resources/ming_logo2.png
+	../resources/convert_to_565 ../resources/ming_logo2
+
+kernel.img: loader2 $(OBJ_FILES) ../resources/ming_logo2.raw
 	$(ARM-GNU)-ld $(OBJ_FILES) -T loader -o boot.elf
 	$(ARM-GNU)-objdump -D boot.elf > boot.list
 #	$(ARM-GNU)-objcopy boot.elf -O ihex boot.hex
-	$(ARM-GNU)-objcopy boot.elf -O binary kernel.img
+	$(ARM-GNU)-objcopy boot.elf -S -O binary kernel.img
+
+
+#------------------------------------------------------------------------------
+# Running
+#------------------------------------------------------------------------------
 
 run: kernel.img
-	emulator -verbose -avd phone -shell -show-kernel -qemu -kernel kernel.img
+	emulator -verbose -avd phone2 -shell -show-kernel -qemu -kernel kernel.img
+
+debug: kernel.img
+	emulator -verbose -avd phone2 -shell -show-kernel -qemu -s -S -kernel kernel.img
+
+debugger:
+	$(ARM-GNU)-gdb -ex "target remote localhost:1234" 

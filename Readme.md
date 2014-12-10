@@ -7,9 +7,9 @@ phones. The aims of this project are:
 2. *Beauty*. Readable, maintainable.
 3. *Easy*. Easy to use.
 
-I'm considering having the user interface based on HTML, and
-incorporating Bitcoin to natively do finance. These are a distant
-dream though.
+I'm considering using Rust for memory security, having the user
+interface based on HTML, and incorporating Bitcoin to natively do
+finance. These are a distant dream though.
 
 This project is just for fun.
 

@@ -5,10 +5,9 @@ SECTIONS
 {
     /* Starts at LOADER_ADDR. */
     . = 0x10000;
-    _start = .;
-    _text_start = .;
     .text :
     {
+	start.o (INTERRUPT)
         KEEP(*(.text.boot))
         *(.text)
     }
