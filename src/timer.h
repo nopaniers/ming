@@ -12,7 +12,7 @@
 //------------------------------------------------------------------------------
 
 // Base address
-#define TIMER      0xff003000
+#define TIMER     0xff003000
 
 // Offsets
 #define TIME_LOW        0x00

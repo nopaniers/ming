@@ -13,7 +13,6 @@
 //------------------------------------------------------------------------------
 
 #define VIDEO        0xff014000
-#define VIDEO_BUFFER 0x00100000
 
 #define GET_WIDTH           0x00
 #define GET_HEIGHT          0x04
@@ -29,7 +28,7 @@
 #define FB_IRQ                14
 
 
-static unsigned char* video_buffer = (unsigned char *) VIDEO_BUFFER;
+// static unsigned char* video_buffer = (unsigned char *) VIDEO_BUFFER;
 
 
 //------------------------------------------------------------------------------
@@ -49,15 +48,15 @@ typedef enum {
 
 typedef struct Video_S 
 {
-  uint32 width;
-  uint32 height;
-  uint32 interrupt_status;
-  uint32 interrupt_enabled;
-  uint32 base;
-  uint32 rotation;
-  uint32 set_blank;
-  uint32 physical_width;
-  uint32 physical_height;
+  uint32  width;
+  uint32  height;
+  uint32  interrupt_status;
+  uint32  interrupt_enabled;
+  uint32 *base;
+  uint32  rotation;
+  uint32  set_blank;
+  uint32  physical_width;
+  uint32  physical_height;
   VideoFormat format;
 } *Video;
 
@@ -72,17 +71,6 @@ static Video video;
 #define RED   0xaa
 #define WHITE 0xff
 #define BLACK 0x00
-
-
-//------------------------------------------------------------------------------
-// Size of the screen
-//------------------------------------------------------------------------------
-
-// Note: In future these will be dynamically determined
-
-#define WIDTH  240
-#define HEIGHT 320
-
 
 
 //------------------------------------------------------------------------------

@@ -5,6 +5,7 @@
 #ifndef START_H
 #define START_H
 
+#include "types.h"
 
 //------------------------------------------------------------------------------
 // Constants about architecture
@@ -14,8 +15,6 @@
 #define SERIAL_ADDRESS 0xff002000
 #define ARM_BASE 0x8000
 
-
-
 //
 // Common addresses
 //
@@ -23,7 +22,7 @@
 
 #define INTERRUPT_CONTROLLER 0xff000000
 #define DEVICE_BUS 0xff001000
-#define TIMER      0xff003000
+
 #define RTC        0xff010000
 #define TTY1       0xff002000
 #define TTY2       0xff011000
@@ -64,7 +63,11 @@
 
 // Writing to an arbitrary address
 void putc_memory(unsigned int address, unsigned character);
+void word_copy(uint32 *from, uint32 *to, uint32 number_of_bytes);
+
 void writeln_memory(unsigned int address, char *string);
+
+
 
 // Writing to the serial port
 void writeln_serial(char *string);
