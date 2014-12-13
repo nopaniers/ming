@@ -16,7 +16,9 @@ This project is just for fun.
 
 Ming is named after my beautiful wife.
 
+## Screenshot
 
+![Screenshot of the splash screen](documentation/screenshot-2014-12-13.png)
 
 ## Installation guide
 
