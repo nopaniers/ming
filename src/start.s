@@ -36,9 +36,10 @@ vectors_end:
 	
 _start:				// Control passes here from the bootloader
 	mov sp, #0x10000	// Set up the stack
+	bl hello_rust	
 	blx copy_vectors_to_address_zero
 	blx show_welcome
-	blx splash_screen
+	bl splash_screen
 	blx hang
 	
 	
