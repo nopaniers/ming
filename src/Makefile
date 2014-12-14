@@ -20,10 +20,10 @@ ARM-GNU ?= arm-linux-androideabi
 
 COPTS = -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mcpu=cortex-a9 -mthumb-interwork -std=gnu99 -mthumb -mthumb-interwork
 
-OBJ_FILES = start.o boot.o memset.o video.o timer.o hello.o
+OBJ_FILES = start.o boot.o memset.o video.o serial.o
 
 RUSTC = rustc
-CLANG = clang
+CLANG = clang-mp-3.6
 
 kernel: kernel.img
 
@@ -35,18 +35,11 @@ clean:
 start.o: start.s ../resources/ming_logo2.raw
 	$(ARM-GNU)-gcc $(COPTS) -c start.s -o start.o
 
-boot.o: boot.c start.h
-	$(ARM-GNU)-gcc $(COPTS) -c boot.c -o boot.o
+#boot.o: boot.c start.h
+#	$(ARM-GNU)-gcc $(COPTS) -c boot.c -o boot.o
 
 memset.o: memset.s
 	$(ARM-GNU)-gcc $(COPTS) -c memset.s -o memset.o
-
-# video.o: video.c video.h	
-#	$(ARM-GNU)-gcc $(COPTS) -c video.c -o video.o
-
-timer.o: timer.c timer.h
-	$(ARM-GNU)-gcc $(COPTS) -c timer.c -o timer.o
-
 
 ../resources/ming_logo2.raw: ../resources/ming_logo2.png
 	../resources/convert_to_565 ../resources/ming_logo2
@@ -62,19 +55,29 @@ kernel.img: loader $(OBJ_FILES) ../resources/ming_logo2.raw
 # Rust
 #------------------------------------------------------------------------------
 
-hello.o: hello.bc
-	$(CLANG) --target=thumbv7--none-androideabi -mcpu=cortex-a8 -c hello.bc
-	$(ARM-GNU)-objdump -D hello.o > hello.list
+serial.o: serial.bc
+	$(CLANG) --target=thumbv7--none-androideabi -mcpu=cortex-a8 -c serial.bc
+	$(ARM-GNU)-objdump -D serial.o > serial.list
 
-hello.bc: hello.rs
-	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc hello.rs
+serial.bc: serial.rs
+	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc serial.rs -L ./
+	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o serial.ll --emit ir serial.rs -L ./
+
 
 video.o: video.bc
 	$(CLANG) --target=thumbv7--none-androideabi -mcpu=cortex-a8 -c video.bc
 	$(ARM-GNU)-objdump -D video.o > video.list
 
 video.bc: video.rs
-	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc video.rs
+	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc video.rs -L ./
+
+
+boot.o: boot.bc
+	$(CLANG) --target=thumbv7--none-androideabi -mcpu=cortex-a8 -c boot.bc
+	$(ARM-GNU)-objdump -D boot.o > boot.list
+
+boot.bc: boot.rs
+	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc boot.rs -L ./
 
 
 

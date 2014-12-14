@@ -36,11 +36,10 @@ vectors_end:
 	
 _start:				// Control passes here from the bootloader
 	mov sp, #0x10000	// Set up the stack
-	bl hello_rust	
-	blx copy_vectors_to_address_zero
-	blx show_welcome
+	bl show_welcome
+	bl copy_vectors_to_address_zero
 	bl splash_screen
-	blx hang
+	bl hang
 	
 	
 .globl hang
@@ -63,9 +62,9 @@ putc_memory:			// r0: address to print to,
 	bx 	lr
 
 	
-.globl writeln_serial
+.globl writeln_serial_asm
 .globl writeln_memory
-writeln_serial: 		// Write a string to the serial port
+writeln_serial_asm: 		// Write a string to the serial port
 	mov	r1, r0		// r1 now contains the string address
 	mov	r0, #0x2000 	// The serial port address
 	movt	r0, #0xff00

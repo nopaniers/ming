@@ -5,11 +5,8 @@
 #![no_std]
 #![allow(improper_ctypes)]
 
-#![feature(lang_items)]
-#[lang = "sized"]
-trait Sized {}
+extern crate core;
 
-#[lang = "sync"]
 
 /*------------------------------------------------------------------------------
  * Video data structure
