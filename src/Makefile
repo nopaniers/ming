@@ -35,9 +35,6 @@ clean:
 start.o: start.s ../resources/ming_logo2.raw
 	$(ARM-GNU)-gcc $(COPTS) -c start.s -o start.o
 
-#boot.o: boot.c start.h
-#	$(ARM-GNU)-gcc $(COPTS) -c boot.c -o boot.o
-
 memset.o: memset.s
 	$(ARM-GNU)-gcc $(COPTS) -c memset.s -o memset.o
 
@@ -47,7 +44,6 @@ memset.o: memset.s
 kernel.img: loader $(OBJ_FILES) ../resources/ming_logo2.raw
 	$(ARM-GNU)-ld $(OBJ_FILES) -T loader -o boot.elf
 	$(ARM-GNU)-objdump -D boot.elf > boot.list
-#	$(ARM-GNU)-objcopy boot.elf -O ihex boot.hex
 	$(ARM-GNU)-objcopy boot.elf -S -O binary kernel.img
 
 
@@ -55,31 +51,25 @@ kernel.img: loader $(OBJ_FILES) ../resources/ming_logo2.raw
 # Rust
 #------------------------------------------------------------------------------
 
-serial.o: serial.bc
-	$(CLANG) --target=thumbv7--none-androideabi -mcpu=cortex-a8 -c serial.bc
-	$(ARM-GNU)-objdump -D serial.o > serial.list
+serial.o: serial.rs
+video.o: video.rs
+boot.o: boot.rs
 
-serial.bc: serial.rs
-	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc serial.rs -L ./
-	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o serial.ll --emit ir serial.rs -L ./
+#
+# A bit of a convoluted toolchain here:
+#     .rs -(rustc)-> LLVM .bc -(clang)-> .o 
+#
+# One subtlety is that rustc and clang's LLVM versions must match. 
+# Instally LLVM-3.6 was fine for me, but if you are trying to compile this in
+# future, try the most recent version of each.
+#
 
+%.o: %.bc
+	$(CLANG) --target=thumbv7--none-androideabi -mcpu=cortex-a8 -c $< -o $@
+	$(ARM-GNU)-objdump -D $@ > $*.list
 
-video.o: video.bc
-	$(CLANG) --target=thumbv7--none-androideabi -mcpu=cortex-a8 -c video.bc
-	$(ARM-GNU)-objdump -D video.o > video.list
-
-video.bc: video.rs
-	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc video.rs -L ./
-
-
-boot.o: boot.bc
-	$(CLANG) --target=thumbv7--none-androideabi -mcpu=cortex-a8 -c boot.bc
-	$(ARM-GNU)-objdump -D boot.o > boot.list
-
-boot.bc: boot.rs
-	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc boot.rs -L ./
-
-
+%.bc: %.rs
+	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc $< -L ./
 
 
 
