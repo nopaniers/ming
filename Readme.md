@@ -8,7 +8,7 @@ phones. The aims of this project are:
 3. *Easy*. Easy to use.
 
 I will use Rust (because of the nice way it deals with ownership of
-memory and the security it gives) ultimately aim to have the user
+memory and the security it gives) and ultimately aim to have the user
 interface based on HTML. Having anything useful is a distant dream
 though.
 
@@ -32,7 +32,7 @@ Unfortunately there are quite a few requirements to run this project:
 - Install clang.
 - Run "make run" in the /src directory.
 
-Alternately, to debug (which is highly useful)
+That should make it run on the Android emulator (although all it does so far is display a splash screen). Alternately, to debug (which is highly useful)
 
 - Run "make debug" in the /src directory
 - Run "make debugger" in the /src directory (but from a different terminal)

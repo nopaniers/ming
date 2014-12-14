@@ -60,7 +60,7 @@ boot.o: boot.rs
 #     .rs -(rustc)-> LLVM .bc -(clang)-> .o 
 #
 # One subtlety is that rustc and clang's LLVM versions must match. 
-# Instally LLVM-3.6 was fine for me, but if you are trying to compile this in
+# LLVM-3.6 was fine for me, but if you are trying to compile this in
 # future, try the most recent version of each.
 #
 
