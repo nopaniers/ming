@@ -35,16 +35,30 @@ firq_address:			.word fiq_handler
 vectors_end:	
 	
 _start:				// Control passes here from the bootloader
-	mov sp, #0x10000	// Set up the stack
-	bl show_welcome
-	bl copy_vectors_to_address_zero
-	bl splash_screen
-	bl hang
+	ldr 	sp, =0x07FFFFF0	// Set up the stack (at the end of 128MB)
+	bl 	show_welcome
+	bl 	copy_vectors_to_address_zero
+	bl 	splash_screen
+	bl 	switch_into_user_mode
+	bl 	hang
+	
+
+.globl switch_into_user_mode
+switch_into_user_mode:
+	mov 	ip, sp		// Setting up the user mode stack
+	msr 	CPSR_c, #0xdf 	// System mode (ie. user with super privilege)
+	mov 	sp, ip		// Set up stack
+	msr 	CPSR_c, 0xd3
+	
+	mov 	r0, #0x10 	// User mode
+	msr 	SPSR, r0  	// Set the status register next time we movs
+	ldr 	lr, =user_mode_function
+	movs	pc, lr		// Call the function and change to user mode
 	
 	
 .globl hang
 hang:				// This is here for debugging purposes
-	b hang			// Loop forever
+	b 	hang		// Loop forever
 
 	
 .globl word_copy

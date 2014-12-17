@@ -1,10 +1,10 @@
 //==============================================================================
-// Hello
+// Serial Device
 //==============================================================================
 
-#![no_std]
-#![feature(globs)]
-#![feature(lang_items)]
+// #![no_std]
+// #![feature(globs)]
+// #![feature(lang_items)]
 
 extern crate core;
 use core::str::*;
@@ -19,6 +19,7 @@ use core::str::*;
  *
  *----------------------------------------------------------------------------*/
 
+#[allow(dead_code)]
 struct SerialPort
 {
    put_char: u32,
@@ -35,10 +36,14 @@ static SERIAL_PORT: *mut SerialPort = 0xff002000 as *mut SerialPort;
  * Writing to the serial port
  *----------------------------------------------------------------------------*/
 
+#[no_mangle]
 #[no_stack_check]
 pub fn write_char(c: char)
 {
    unsafe {
+      // TODO: Should check if buffer is free here.
+      //       Still figuring out how to avoid compiler optimizing
+
       (*SERIAL_PORT).put_char = c as u32;
    }
 }
@@ -53,4 +58,5 @@ pub fn writeln_serial(message: &str)
    }
    write_char('\n');
 }
+
 

@@ -2,10 +2,16 @@
 // Video
 //------------------------------------------------------------------------------
 
-#![no_std]
-#![allow(improper_ctypes)]
+// #![no_std]
+// #![allow(improper_ctypes)]
+// #![feature(lang_items)]
 
 extern crate core;
+// #[lang = "sized"]
+// trait Sized {}
+
+// #[lang = "copy"]
+// #[lang = "sync"]
 
 
 /*------------------------------------------------------------------------------
@@ -17,6 +23,7 @@ extern crate core;
  *
  *----------------------------------------------------------------------------*/
 
+#[allow(dead_code)]
 struct Video 
 {
   width: u32,
@@ -38,6 +45,7 @@ static VIDEO: *mut Video = 0xff014000 as *mut Video;
  * Display splash screen
  *----------------------------------------------------------------------------*/
 
+#[allow(dead_code)]
 #[no_mangle]
 #[no_stack_check]
 pub fn splash_screen()

@@ -4,13 +4,16 @@
 
 #![no_std]
 #![feature(globs)]
-// #![feature(lang_items)]
+#![feature(lang_items)]
 
 extern crate core;
-
 use serial::*;
+use user::*;
 
-mod serial;
+pub mod compiler_funcs;
+pub mod user;
+pub mod serial;
+pub mod video;
 
 
 //------------------------------------------------------------------------------
@@ -26,11 +29,7 @@ pub fn show_welcome()
   writeln_serial("Ming OS, version 0.01");
   writeln_serial("---------------------");
   writeln_serial("");
-  writeln_serial("Written by Charles Hill, 2014");
-  writeln_serial("");
 }
-
-
 
 
 #[no_mangle]
@@ -59,4 +58,16 @@ pub fn copy_vectors_to_address_zero()
    writeln_serial("Finished copying vectors");
 }
 
+
+
+#[no_mangle]
+#[no_stack_check]
+pub fn start_processes()
+{
+   // Allocate a stack for the first process
+   let mut first_stack: [u32, ..256]; 
+   first_stack[(256-16)] = 0x0;
+   user::user_mode_function();
+   // first_stack[(256-15)] = &user_mode_function as u32;
+}
 

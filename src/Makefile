@@ -18,9 +18,11 @@
 
 ARM-GNU ?= arm-linux-androideabi
 
-COPTS = -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mcpu=cortex-a9 -mthumb-interwork -std=gnu99 -mthumb -mthumb-interwork
+COPTS = -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mcpu=cortex-a9 -std=gnu99 -marm 
 
-OBJ_FILES = start.o boot.o memset.o video.o serial.o
+
+OBJ_FILES = start.o boot.o memset.o
+RUST_LIBRARIES = libmorestack.a libcompiler-rt.a
 
 RUSTC = rustc
 CLANG = clang-mp-3.6
@@ -41,35 +43,32 @@ memset.o: memset.s
 ../resources/ming_logo2.raw: ../resources/ming_logo2.png
 	../resources/convert_to_565 ../resources/ming_logo2
 
-kernel.img: loader $(OBJ_FILES) ../resources/ming_logo2.raw
-	$(ARM-GNU)-ld $(OBJ_FILES) -T loader -o boot.elf
+kernel.img: loader $(OBJ_FILES) ../resources/ming_logo2.raw $(RUST_LIBRARIES)
+	$(ARM-GNU)-ld $(OBJ_FILES)  -T loader -o boot.elf -lmorestack -L.
 	$(ARM-GNU)-objdump -D boot.elf > boot.list
 	$(ARM-GNU)-objcopy boot.elf -S -O binary kernel.img
+
+
+libmorestack.a: morestack.c
+	$(ARM-GNU)-gcc $(COPTS) -c morestack.c -o morestack.o
+	$(ARM-GNU)-ar rcs libmorestack.a morestack.o
+
+libcompiler-rt.a: compiler-rt.c
+	$(ARM-GNU)-gcc $(COPTS) -c compiler-rt.c -o compiler-rt.o
+	$(ARM-GNU)-ar rcs libcompiler-rt.a compiler-rt.o
 
 
 #------------------------------------------------------------------------------
 # Rust
 #------------------------------------------------------------------------------
 
-serial.o: serial.rs
-video.o: video.rs
 boot.o: boot.rs
 
-#
-# A bit of a convoluted toolchain here:
-#     .rs -(rustc)-> LLVM .bc -(clang)-> .o 
-#
-# One subtlety is that rustc and clang's LLVM versions must match. 
-# LLVM-3.6 was fine for me, but if you are trying to compile this in
-# future, try the most recent version of each.
-#
+%.o: %.rs
+	$(RUSTC) -O --target arm-linux-androideabi --crate-type=staticlib --emit obj $< -o $@ -L ./
 
-%.o: %.bc
-	$(CLANG) --target=thumbv7--none-androideabi -mcpu=cortex-a8 -c $< -o $@
-	$(ARM-GNU)-objdump -D $@ > $*.list
-
-%.bc: %.rs
-	$(RUSTC) -O --target arm-linux-androideabi --crate-type lib -o $@ --emit bc $< -L ./
+%.a: %.rs
+	$(RUSTC) -O --target arm-linux-androideabi --crate-type=staticlib $< -o $@ -L ./
 
 
 
