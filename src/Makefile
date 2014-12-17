@@ -23,6 +23,7 @@ COPTS = -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mcpu=cortex-a9 -std=gn
 
 OBJ_FILES = start.o boot.o memset.o
 RUST_LIBRARIES = libmorestack.a libcompiler-rt.a
+RUST_FILES = boot.rs user.rs video.rs serial.rs compiler_funcs.rs
 
 RUSTC = rustc
 CLANG = clang-mp-3.6
@@ -62,7 +63,7 @@ libcompiler-rt.a: compiler-rt.c
 # Rust
 #------------------------------------------------------------------------------
 
-boot.o: boot.rs
+boot.o: boot.rs $(RUST_FILES)
 
 %.o: %.rs
 	$(RUSTC) -O --target arm-linux-androideabi --crate-type=staticlib --emit obj $< -o $@ -L ./

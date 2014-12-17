@@ -29,7 +29,6 @@ Unfortunately there are quite a few requirements to run this project:
 - Create an avd named phone2, with a screen size 320x240.
 - Install cross-compiler for arm-linux-androideabi gcc cross compiler.
 - Install the nightly version of Rust.
-- Install clang.
 - Run "make run" in the /src directory.
 
 That should make it run on the Android emulator (although all it does so far is display a splash screen). Alternately, to debug (which is highly useful)

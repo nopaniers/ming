@@ -8,6 +8,7 @@
 
 extern crate core;
 use core::str::*;
+// use core::intrinsics::volatile_load;
 
 
 /*------------------------------------------------------------------------------
@@ -41,8 +42,8 @@ static SERIAL_PORT: *mut SerialPort = 0xff002000 as *mut SerialPort;
 pub fn write_char(c: char)
 {
    unsafe {
-      // TODO: Should check if buffer is free here.
-      //       Still figuring out how to avoid compiler optimizing
+      // There should probably be a check here in a read device.
+      // while volatile_load(&(*SERIAL_PORT).bytes_ready)==0 {}
 
       (*SERIAL_PORT).put_char = c as u32;
    }
